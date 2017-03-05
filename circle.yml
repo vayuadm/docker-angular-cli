@@ -6,12 +6,9 @@ machine:
     - docker
   environment:
     IMAGE_NAME: bnohad/docker-angular-cli
-dependencies:
+test:
   override:
     - docker build -t $IMAGE_NAME .
-# test:
-  # override:
-    # - docker run -it --rm -v $PWD/playbooks:/ansible/playbooks vayuadm/vayu-ansible-client test.yaml
 deployment:
   continuous:
     branch: master
