@@ -1,0 +1,23 @@
+machine:
+  pre:
+    - sudo curl -L -o /usr/bin/docker 'https://s3-external-1.amazonaws.com/circle-downloads/docker-1.9.1-circleci'
+    - sudo chmod 0755 /usr/bin/docker
+  services:
+    - docker
+  environment:
+    IMAGE_NAME: bnohad/docker-angular-cli
+dependencies:
+  override:
+    - docker build -t $IMAGE_NAME .
+# test:
+  # override:
+    # - docker run -it --rm -v $PWD/playbooks:/ansible/playbooks vayuadm/vayu-ansible-client test.yaml
+deployment:
+  continuous:
+    branch: master
+    commands:
+      # tag image with CircleCI build number
+      - docker tag $IMAGE_NAME $IMAGE_NAME:$CIRCLE_BUILD_NUM
+      # deploy image to DockerHub
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push $IMAGE_NAME
